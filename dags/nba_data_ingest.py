@@ -13,7 +13,7 @@ default_args = {
     "retries": 0,
     "retry_delay": timedelta(minutes=5),
     "start_date": datetime(2025, 1, 1),
-    "config_arguemnts" : "dwh_date"
+    "config_arguemnts": "dwh_date",
 }
 
 
@@ -43,22 +43,23 @@ with DAG(
     catchup=False,
     tags=["nba", "ingestion"],
 ) as dag:
-    
+
     dag.doc_md = """
-    ### Dag Details
-    This dag ingest **NBA** data from **Kaggle** and write it to MinIO
-    
-    **Manual Run Configuration:**
-    - dwh_date : The date of run (yyyy-mm-dd)
+    ### **DAG Details**
 
-    **Steps:**
-    1. Get execution date.
-    2. Run docker image to fetch and write data to MinIO.
-    3. Trigger next dag `nba_raw`.
+This DAG ingests **NBA** data from **Kaggle** and writes it to **MinIO**, performing the necessary ETL operations.
 
-    **Ownder:**
-    - name: Izzaldeen Radaideh
-    - email: izzaldeen_98@hotmail.com
+#### **Manual Run Configuration**
+- **dwh_date**: The date of the run (yyyy-mm-dd).
+
+#### **Execution Steps**
+1. Retrieve the execution date.
+2. Execute the Docker image to fetch and write data to MinIO.
+3. Trigger the next DAG, **`nba_raw`**.
+
+#### **Owner Information**
+- **Name:** Izzaldeen Radaideh  
+- **Email:** izzaldeen_98@hotmail.com
     """
 
     get_execution_date_task = PythonOperator(

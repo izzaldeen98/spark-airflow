@@ -48,6 +48,27 @@ with DAG(
     tags=["staging", "nba"],
 ) as dag:
 
+    dag.doc_md = """
+    ### **DAG Details**
+
+This DAG reads data from an **Iceberg table** and writes the transformed data back to **Nessie**, performing the necessary ETL operations.
+
+#### **Manual Run Configuration**
+- This DAG **should not** be triggered manually; it must be triggered by the preceding DAG, **`nba_raw`**.
+
+#### **Execution Steps**
+1. Retrieve the execution date.
+2. Execute the Spark job **`nba_staging_spark_job`** to perform ETL operations.
+3. Trigger Next DAG **`nba_prod`**.
+
+#### **Owner Information**
+- **Name:** Izzaldeen Radaideh  
+- **Email:** izzaldeen_98@hotmail.com
+
+    
+    
+    """
+
     get_date = PythonOperator(
         task_id="get_date",
         python_callable=process_xcom,
@@ -64,23 +85,20 @@ with DAG(
 
         source_schema = config.get("source_schema")
         target_schema = config.get("target_schema")
-        
+
         task = spark_iceberg_nessie_op(
             task_name=target_table,
             spark_job_file_name="nba_staging_spark_job",
             arguments={
-                "dwh_date" : "{{ task_instance.xcom_pull(task_ids='get_date') }}",
-                "source_table" : source_table,
-                "target_table" : target_table,
-                "source_schema" : source_schema,
-                "target_schema" : target_schema,
-                "query" : query
-                
-                
-            }
+                "dwh_date": "{{ task_instance.xcom_pull(task_ids='get_date') }}",
+                "source_table": source_table,
+                "target_table": target_table,
+                "source_schema": source_schema,
+                "target_schema": target_schema,
+                "query": query,
+            },
         )
 
-       
         tables_tasks.append(task)
 
     trigger_dag = TriggerDagRunOperator(

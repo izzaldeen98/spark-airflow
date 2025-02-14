@@ -1,5 +1,4 @@
 from airflow import DAG
-from airflow.providers.apache.spark.operators.spark_submit import SparkSubmitOperator
 from airflow.operators.python import PythonOperator
 from airflow.operators.trigger_dagrun import TriggerDagRunOperator
 from datetime import datetime
@@ -30,22 +29,24 @@ with DAG(
     concurrency=1,
     tags=["raw", "nba"],
 ) as dag:
-    
+
     dag.doc_md = """
-    ### Dag Details
-    This dag read data from raw file on MinIO and write a table on **Nessie**
-    
-    **Manual Run Configuration:**
-    - dwh_date : The date of run (yyyy-mm-dd)
+    ### **DAG Details**
 
-    **Steps:**
-    1. Get execution date.
-    2. Run Spark job `nba_raw_spark_job` to do etl.
-    3. Trigger next dag `nba_staging`.
+This DAG reads data from a **raw file on MinIO** and writes the transformed data to **Nessie**, performing the necessary ETL operations.
 
-    **Ownder:**
-    - name: Izzaldeen Radaideh
-    - email: izzaldeen_98@hotmail.com
+#### **Manual Run Configuration**
+- This DAG **should not** be triggered manually; it must be triggered by the preceding DAG, **`nba_raw`**.
+
+#### **Execution Steps**
+1. Retrieve the execution date.
+2. Execute the Spark job **`nba_raw_spark_job`** to perform ETL operations.
+3. Trigger the next DAG, **`nba_staging`**.
+
+#### **Owner Information**
+- **Name:** Izzaldeen Radaideh  
+- **Email:** izzaldeen_98@hotmail.com
+
     """
 
     get_date = PythonOperator(
@@ -59,12 +60,12 @@ with DAG(
 
     for table in config.get("tables"):
         task = spark_iceberg_nessie_op(
-            task_name = table.lower(),
-            spark_job_file_name = "nba_raw_spark_job",
-            arguments = {
-                "dwh_date" : "{{ task_instance.xcom_pull(task_ids='get_date') }}",
-                "table" : table
-            }
+            task_name=table.lower(),
+            spark_job_file_name="nba_raw_spark_job",
+            arguments={
+                "dwh_date": "{{ task_instance.xcom_pull(task_ids='get_date') }}",
+                "table": table,
+            },
         )
         tables_tasks.append(task)
     trigger_dag = TriggerDagRunOperator(
