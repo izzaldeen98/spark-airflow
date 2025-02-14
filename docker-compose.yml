@@ -16,6 +16,8 @@ services:
       - ./config/spark-defaults.conf:/opt/spark/conf/spark-defaults.conf
     networks:
       - spark-network
+    env_file:
+      - .env
 
   spark-worker-1:
     image: bitnami/spark:3.3.2
@@ -28,6 +30,8 @@ services:
       - spark-master
     networks:
       - spark-network
+    env_file:
+      - .env
     volumes:
       - ./jars:/opt/spark/jars
       - ./jobs:/opt/spark/jobs
@@ -44,6 +48,8 @@ services:
       - spark-master
     networks:
       - spark-network
+    env_file:
+      - .env
     volumes:
       - ./jars:/opt/spark/jars
       - ./jobs:/opt/spark/jobs
@@ -60,6 +66,8 @@ services:
       - spark-master
     networks:
       - spark-network
+    env_file:
+      - .env
     volumes:
       - ./jars:/opt/spark/jars
       - ./jobs:/opt/spark/jobs
@@ -72,7 +80,7 @@ services:
     container_name: airflow-webserver
     restart: always
     ports:
-      - "8081:8080"  # Changed port to avoid conflict with Spark
+      - "8081:8080" # Changed port to avoid conflict with Spark
     environment:
       - AIRFLOW__CORE__EXECUTOR=LocalExecutor
       - AIRFLOW__CORE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:airflow@postgres/airflow
@@ -83,10 +91,13 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./jobs:/opt/airflow/jobs
-      - ./jars:/opt/airflow/jars  # Expose the jars to Airflow
+      - ./jars:/opt/airflow/jars # Expose the jars to Airflow
     networks:
       - spark-network
-    command: ["airflow", "webserver"]
+    env_file:
+      - .env
+
+    command: [ "airflow", "webserver" ]
 
   airflow-scheduler:
     build:
@@ -104,10 +115,12 @@ services:
       - ./dags:/opt/airflow/dags
       - ./logs:/opt/airflow/logs
       - ./jobs:/opt/airflow/jobs
-      - ./jars:/opt/airflow/jars  # Expose the jars to Airflow
+      - ./jars:/opt/airflow/jars # Expose the jars to Airflow
     networks:
       - spark-network
-    command: ["airflow", "scheduler"]
+    env_file:
+      - .env
+    command: [ "airflow", "scheduler" ]
 
   postgres:
     image: postgres:15
