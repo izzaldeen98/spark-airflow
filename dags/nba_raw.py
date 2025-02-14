@@ -31,7 +31,7 @@ with DAG(
 ) as dag:
 
     dag.doc_md = """
-    ### **DAG Details**
+#### **DAG Details** ###
 
 This DAG reads data from a **raw file on MinIO** and writes the transformed data to **Nessie**, performing the necessary ETL operations.
 

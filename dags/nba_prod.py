@@ -47,7 +47,7 @@ with DAG(
 ) as dag:
 
     dag.doc_md = """
-            ### **DAG Details**
+            #### **DAG Details**
 
             This DAG reads data from an **Iceberg table** and writes the transformed data back to **Nessie**, performing the necessary ETL operations.
 

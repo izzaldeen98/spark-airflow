@@ -45,7 +45,7 @@ with DAG(
 ) as dag:
 
     dag.doc_md = """
-    ### **DAG Details**
+#### **DAG Details**
 
 This DAG ingests **NBA** data from **Kaggle** and writes it to **MinIO**, performing the necessary ETL operations.
 
