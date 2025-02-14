@@ -30,6 +30,23 @@ with DAG(
     concurrency=1,
     tags=["raw", "nba"],
 ) as dag:
+    
+    dag.doc_md = """
+    ### Dag Details
+    This dag read data from raw file on MinIO and write a table on **Nessie**
+    
+    **Manual Run Configuration:**
+    - dwh_date : The date of run (yyyy-mm-dd)
+
+    **Steps:**
+    1. Get execution date.
+    2. Run Spark job `nba_raw_spark_job` to do etl.
+    3. Trigger next dag `nba_staging`.
+
+    **Ownder:**
+    - name: Izzaldeen Radaideh
+    - email: izzaldeen_98@hotmail.com
+    """
 
     get_date = PythonOperator(
         task_id="get_date",
