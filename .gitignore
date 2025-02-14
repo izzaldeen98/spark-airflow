@@ -2,3 +2,4 @@ logs/
 postgres_data/
 jars/
 __pycache__/
+config/
