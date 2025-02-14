@@ -1,5 +1,6 @@
 from pyspark.sql import SparkSession
 import argparse
+from os import environ
 
 # Parse command-line arguments
 
@@ -10,6 +11,12 @@ def iceberg_table_exists(spark, schema, table):
     )
     return result.count() > 0
 
+minio_url = environ["MINIO_URL"]
+minio_access_key = environ["MINIO_ACCESS_KEY"]
+minio_secret_key = environ["MINIO_SECRET_KEY"]
+
+nessie_url = environ["NESSIE_URL"]
+nessie_data_warehouse_path = environ["NESSIE_DATA_WAREHOUSE_PATH"]
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--dwh_date", type=str, required=True)

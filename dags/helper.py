@@ -1,9 +1,9 @@
 import urllib.request
 import json
-from constants import PORTINAR_PASSWORD , PORTINAR_USERNAME
+from constants import portinar_username , portinar_password , portinar_url
 
 def run_portainer_container(payload : dict):
-    base_url = "http://host.docker.internal:5000/api/endpoints/2/docker"
+    base_url = f"{portinar_url}/api/endpoints/2/docker"
     
     jwt = auth_portainer()
     
@@ -51,12 +51,12 @@ def auth_portainer():
     }
 
     data = {
-    "Username": PORTINAR_USERNAME,
-    "Password": PORTINAR_PASSWORD
+    "Username": portinar_username,
+    "Password": portinar_password
     }
     
     
-    url = "http://host.docker.internal:5000/api/auth"
+    url = f"{portinar_url}/api/auth"
     request = urllib.request.Request(
         url=url,
         data=json.dumps(data).encode('utf-8'),
